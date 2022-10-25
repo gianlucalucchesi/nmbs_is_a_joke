@@ -4,17 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class Stations {
+public class Liveboard {
 
     @JsonProperty("version")
     private String version;
     @JsonProperty("timestamp")
-    private String timestamp;
+    private int timestamp;
     @JsonProperty("station")
-    private List<Station> stationList;
+    private String station;
+    @JsonProperty("stationinfo")
+    private Station stationInfo;
+    @JsonProperty("departures")
+    private Departures departures;
 
 }

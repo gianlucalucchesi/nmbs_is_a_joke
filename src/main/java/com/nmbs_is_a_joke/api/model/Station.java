@@ -11,14 +11,14 @@ public class Station {
     @JsonProperty("id")
     String id;
     @JsonProperty("@id")
-    String Uri;
+    String url;
     @JsonProperty("name")
     String name;
     @JsonProperty("standardname")
     String standardName;
     @JsonProperty("locationX")
-    String locationX;
+    double longitude;
     @JsonProperty("locationY")
-    String locationY;
+    double latitude;
 
 }
