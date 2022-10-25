@@ -1,6 +1,8 @@
 package com.nmbs_is_a_joke.api;
 
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
+import com.nmbs_is_a_joke.api.model.Station;
+import com.nmbs_is_a_joke.api.model.Stations;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -15,7 +17,11 @@ public class NmbsIsAJokeApplication {
 		Date today = Calendar.getInstance().getTime();
 
 		SpringApplication.run(NmbsIsAJokeApplication.class, args);
-		IRailApiHelper.retrieveLiveboardForGivenStation("Dilbeek", today);
+
+		Stations stations = IRailApiHelper.retrieveAllStations();
+		for (Station station : stations.getStation()) {
+			IRailApiHelper.retrieveLiveboardForGivenStation(station.getName(), today);
+		}
 	}
 
 }

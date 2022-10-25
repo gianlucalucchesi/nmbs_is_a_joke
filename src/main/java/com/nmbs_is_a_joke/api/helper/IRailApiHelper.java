@@ -1,5 +1,7 @@
 package com.nmbs_is_a_joke.api.helper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nmbs_is_a_joke.api.model.Stations;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.io.BufferedReader;
@@ -27,21 +29,28 @@ public class IRailApiHelper {
                 .setHost(host)
                 .setPath(endpoint)
                 .addParameter("station", station)
-                .addParameter("date", strDate);
+                .addParameter("date", strDate)
+                .addParameter("format", "json")
+                .addParameter("lang", "en");
 
-        String stations = retrieveAllStations();
         String liveboard = getRequest(uriBuilder);
+        System.out.println(liveboard);
     }
 
-    public static String retrieveAllStations() throws IOException {
+    public static Stations retrieveAllStations() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/stations";
 
         URIBuilder uriBuilder = new URIBuilder()
                 .setScheme(scheme)
                 .setHost(host)
-                .setPath(endpoint);
+                .setPath(endpoint)
+                .addParameter("format", "json")
+                .addParameter("lang", "en");
 
-        return getRequest(uriBuilder);
+        String jsonString = getRequest(uriBuilder);
+
+        return mapper.readValue(jsonString, Stations.class);
     }
 
     private static String getRequest(URIBuilder uriBuilder) throws IOException {

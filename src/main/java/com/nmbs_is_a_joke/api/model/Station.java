@@ -1,11 +1,24 @@
 package com.nmbs_is_a_joke.api.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Station {
 
+    @JsonProperty("id")
     String id;
-    String standardname;
-    String URI;
+    @JsonProperty("@id")
+    String Uri;
+    @JsonProperty("name")
+    String name;
+    @JsonProperty("standardname")
+    String standardName;
+    @JsonProperty("locationX")
     String locationX;
+    @JsonProperty("locationY")
     String locationY;
 
 }
