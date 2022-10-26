@@ -1,6 +1,5 @@
 package com.nmbs_is_a_joke.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +18,9 @@ public class Vehicle {
     private String type;
     @JsonProperty("@id")
     private String url;
+    @JsonProperty("locationX")
+    private double locationX;
+    @JsonProperty("locationY")
+    private double locationY;
 
 }

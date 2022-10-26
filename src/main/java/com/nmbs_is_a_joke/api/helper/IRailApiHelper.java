@@ -3,6 +3,8 @@ package com.nmbs_is_a_joke.api.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmbs_is_a_joke.api.model.Liveboard;
 import com.nmbs_is_a_joke.api.model.Stations;
+import com.nmbs_is_a_joke.api.model.Vehicle;
+import com.nmbs_is_a_joke.api.model.VehicleRetrieval;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.io.BufferedReader;
@@ -36,7 +38,6 @@ public class IRailApiHelper {
                 .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
-
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
     }
 
@@ -52,8 +53,28 @@ public class IRailApiHelper {
                         .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
-
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Stations.class) : null;
+    }
+
+    // Addition arrivalDelay of last stop of all trains of given day
+    public static VehicleRetrieval retrieveVehicle(String vehicleId, Date date) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        final String endpoint = "/vehicle";
+
+        DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
+        String strDate = dateFormat.format(date);
+
+        URIBuilder uriBuilder = new URIBuilder()
+                .setScheme(scheme)
+                .setHost(host)
+                .setPath(endpoint)
+                .addParameter("id", vehicleId)
+                .addParameter("date", strDate)
+                .addParameter("format", "json")
+                .addParameter("lang", "en");
+
+        String jsonString = getRequest(uriBuilder);
+        return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, VehicleRetrieval.class) : null;
     }
 
     private static String getRequest(URIBuilder uriBuilder) throws IOException {
@@ -73,6 +94,8 @@ public class IRailApiHelper {
                     content.append(inputLine);
                 }
                 return content.toString();
+            } else if (httpURLConnection.getResponseCode() == 503) {
+                System.out.println("########## 503 Too Many Requests");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

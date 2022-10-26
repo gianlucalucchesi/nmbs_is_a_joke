@@ -1,10 +1,7 @@
 package com.nmbs_is_a_joke.api;
 
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
-import com.nmbs_is_a_joke.api.model.Departure;
-import com.nmbs_is_a_joke.api.model.Liveboard;
-import com.nmbs_is_a_joke.api.model.Station;
-import com.nmbs_is_a_joke.api.model.Stations;
+import com.nmbs_is_a_joke.api.model.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -22,6 +19,7 @@ public class NmbsIsAJokeApplication {
 		List<Liveboard> liveboardList = handleLiveboards();
 		System.out.println("===================================");
 		int totalDelayInSeconds = handleDelay(liveboardList);
+		System.out.printf("%s seconds%n", totalDelayInSeconds);
 		String readableDelay = secondsToReadableDate(totalDelayInSeconds);
 		System.out.println(readableDelay);
 	}
@@ -59,8 +57,8 @@ public class NmbsIsAJokeApplication {
 		int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
 		long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
 		long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60);
-		return String.format("%s days %s hours %s minutes %s seconds", day, hours, minutes, seconds);
+//		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60);
+		return String.format("%s days %s hours %s minutes", day, hours, minutes);
 	}
 
 }
