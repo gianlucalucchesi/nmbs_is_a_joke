@@ -3,9 +3,9 @@ package com.nmbs_is_a_joke.api.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmbs_is_a_joke.api.model.Liveboard;
 import com.nmbs_is_a_joke.api.model.Stations;
-import com.nmbs_is_a_joke.api.model.Vehicle;
 import com.nmbs_is_a_joke.api.model.VehicleRetrieval;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,11 +17,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+@Component
 public class IRailApiHelper {
     final static String host = "api.irail.be";
     final static String scheme = "https";
 
-    public static Liveboard retrieveLiveboardForGivenStation(String stationId, Date date) throws IOException {
+    public static Liveboard retrieveLiveboard(String stationId, Date date, String time) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/liveboard";
 
@@ -34,8 +35,9 @@ public class IRailApiHelper {
                 .setPath(endpoint)
                 .addParameter("id", stationId)
                 .addParameter("date", strDate)
-                .addParameter("format", "json")
-                .addParameter("lang", "en");
+                .addParameter("time", time) // time is formatted as hhmm.
+                .addParameter("arrdep", "departure") // arivals or departures
+                .addParameter("format", "json").addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
@@ -46,11 +48,11 @@ public class IRailApiHelper {
         final String endpoint = "/stations";
 
         URIBuilder uriBuilder = new URIBuilder()
-                        .setScheme(scheme)
-                        .setHost(host)
-                        .setPath(endpoint)
-                        .addParameter("format", "json")
-                        .addParameter("lang", "en");
+                .setScheme(scheme).
+                setHost(host)
+                .setPath(endpoint)
+                .addParameter("format", "json")
+                .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Stations.class) : null;
@@ -109,4 +111,5 @@ public class IRailApiHelper {
         }
         return null;
     }
+
 }
