@@ -23,12 +23,12 @@ public class IRailApiHelper {
     final static String host = "api.irail.be";
     final static String scheme = "https";
 
-    public static Liveboard retrieveLiveboard(String stationId, Calendar date, String time) throws IOException {
+    public Liveboard retrieveLiveboard(String stationId, Calendar calendar, String time) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/liveboard";
 
         DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
-        String strDate = dateFormat.format(date.getTime());
+        String strDate = dateFormat.format(getDateFromCalendar(calendar));
 
         URIBuilder uriBuilder = new URIBuilder()
                 .setScheme(scheme)
@@ -44,7 +44,7 @@ public class IRailApiHelper {
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
     }
 
-    public static Stations retrieveAllStations() throws IOException {
+    public Stations retrieveAllStations() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/stations";
 
@@ -60,12 +60,12 @@ public class IRailApiHelper {
     }
 
     // Addition arrivalDelay of last stop of all trains of given day
-    public static VehicleRetrieval retrieveVehicle(String vehicleId, Date date) throws IOException {
+    public VehicleRetrieval retrieveVehicle(String vehicleId, Calendar calendar) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/vehicle";
 
         DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
-        String strDate = dateFormat.format(date);
+        String strDate = dateFormat.format(getDateFromCalendar(calendar));
 
         URIBuilder uriBuilder = new URIBuilder()
                 .setScheme(scheme)
@@ -80,7 +80,7 @@ public class IRailApiHelper {
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, VehicleRetrieval.class) : null;
     }
 
-    private static String getRequest(URIBuilder uriBuilder) throws IOException {
+    private String getRequest(URIBuilder uriBuilder) throws IOException {
         HttpURLConnection httpURLConnection = null;
         BufferedReader reader = null;
 
@@ -111,6 +111,10 @@ public class IRailApiHelper {
             }
         }
         return null;
+    }
+
+    private Date getDateFromCalendar(Calendar calendar) {
+        return calendar.getTime(); // Called getTime but return date
     }
 
 }

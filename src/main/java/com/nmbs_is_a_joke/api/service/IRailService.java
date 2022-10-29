@@ -2,8 +2,6 @@ package com.nmbs_is_a_joke.api.service;
 
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
 import com.nmbs_is_a_joke.api.model.*;
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -11,31 +9,44 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Service
 public class IRailService {
 
-    public String getTotalDelayForGivenDay(Calendar date) throws IOException {
-        List<List<String>> vehicles = new ArrayList<>();
+    IRailApiHelper iRailApiHelper;
+
+    public IRailService() {
+        iRailApiHelper = new IRailApiHelper();
+    }
+
+    public String getTotalDelayForGivenDay(Calendar calendar) throws IOException {
+        List<List<String>> vehiclesPerStationList = new ArrayList<>();
+        List<VehicleRetrieval> vehicleDetailsForDate = new ArrayList<>();
         int totalDelayInSeconds = 0;
         int totalCanceledTrains = 0;
 
-        Stations stations = IRailApiHelper.retrieveAllStations();
+        Stations stations = iRailApiHelper.retrieveAllStations();
 
         // START - For testing purpose
-        assert stations != null;
-        List<Station> stationList = new ArrayList<>();
-        Optional<Station> dilbeek =
-                stations.getStationList()
-                        .stream()
-                        .filter(station -> station.getName().equalsIgnoreCase("Dilbeek"))
-                        .findFirst();
-        assert dilbeek.isPresent();
-        stationList.add(dilbeek.get());
-        stations.setStationList(stationList);
+//        assert stations != null;
+//        List<Station> stationList = new ArrayList<>();
+//        Optional<Station> dilbeek =
+//                stations.getStationList()
+//                        .stream()
+//                        .filter(station -> station.getName().equalsIgnoreCase("Dilbeek"))
+//                        .findFirst();
+//        assert dilbeek.isPresent();
+//        stationList.add(dilbeek.get());
+//        stations.setStationList(stationList);
         // STOP - For testing purpose
 
         for(Station station : stations.getStationList()){
-            vehicles.add(getVehiclesForStation(station, date));
+            vehiclesPerStationList.add(getVehiclesForStation(station, calendar));
+        }
+        for(List<String> vehiclesPerStation : vehiclesPerStationList) {
+            vehicleDetailsForDate = getVehicleDetailsForDate(vehiclesPerStation, calendar);
+        }
+        for(VehicleRetrieval vehicleDetails : vehicleDetailsForDate) {
+            totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
         }
 
         return secondsToReadableDate(totalDelayInSeconds);
@@ -52,10 +63,10 @@ public class IRailService {
     private List<String> getVehiclesForStation(Station station, Calendar date) throws IOException {
         boolean allTrainsRetrieved = false;
         String time = "0000";
-        List<String> trains = new ArrayList<>();
+        List<String> vehicles = new ArrayList<>();
 
         while (!allTrainsRetrieved) {
-            Liveboard liveboard = IRailApiHelper.retrieveLiveboard(station.getId(), date, time);
+            Liveboard liveboard = iRailApiHelper.retrieveLiveboard(station.getId(), date, time);
 
             if (Objects.nonNull(liveboard)) {
                 int index = 0;
@@ -64,8 +75,8 @@ public class IRailService {
                     Calendar departureDateTime = epochToCalendar(departure.getTime());
 
                     if (departureDateTime.get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
-                        if (!trains.contains(departure.getVehicle())) {
-                            trains.add(departure.getVehicle());
+                        if (!vehicles.contains(departure.getVehicle())) {
+                            vehicles.add(departure.getVehicle());
                         }
                         if (index == liveboard.getDepartures().getDepartureList().size()) {
                             time = getTime(departureDateTime);
@@ -77,15 +88,21 @@ public class IRailService {
                 }
             }
         }
-        return trains;
+        return vehicles;
     }
 
-    private void handleDepartures(Liveboard liveboard) {
-        throw new NotImplementedException();
+    private List<VehicleRetrieval> getVehicleDetailsForDate(List<String> vehicles, Calendar calendar) throws IOException {
+        List<VehicleRetrieval> vehicleDetailsList = new ArrayList<>();
+        for(String vehicleId : vehicles) {
+            VehicleRetrieval vehicleDetails = iRailApiHelper.retrieveVehicle(vehicleId, calendar);
+            vehicleDetailsList.add(vehicleDetails);
+        }
+        return vehicleDetailsList;
     }
 
-    private int handleDelay(VehicleRetrieval vehicleRetrieval) {
-        throw new NotImplementedException();
+    private int totalDelayForGivenVehicle(VehicleRetrieval vehicleDetail) {
+        int lastStop = vehicleDetail.getStops().getNumber();
+        return vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
     }
 
     private static String secondsToReadableDate(int pSeconds) {
