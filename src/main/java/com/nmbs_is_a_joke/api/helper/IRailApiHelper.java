@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -22,12 +23,12 @@ public class IRailApiHelper {
     final static String host = "api.irail.be";
     final static String scheme = "https";
 
-    public static Liveboard retrieveLiveboard(String stationId, Date date, String time) throws IOException {
+    public static Liveboard retrieveLiveboard(String stationId, Calendar date, String time) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/liveboard";
 
         DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
-        String strDate = dateFormat.format(date);
+        String strDate = dateFormat.format(date.getTime());
 
         URIBuilder uriBuilder = new URIBuilder()
                 .setScheme(scheme)

@@ -3,6 +3,7 @@ package com.nmbs_is_a_joke.api.service;
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
 import com.nmbs_is_a_joke.api.model.*;
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -10,17 +11,17 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@Service
+@Component
 public class IRailService {
 
-    public String getTotalDelayForGivenDay(Date date) throws IOException {
-        List<VehicleRetrieval> vehicles;
-        int totalDelayInSeconds;
-        int totalCanceledTrains;
+    public String getTotalDelayForGivenDay(Calendar date) throws IOException {
+        List<List<String>> vehicles = new ArrayList<>();
+        int totalDelayInSeconds = 0;
+        int totalCanceledTrains = 0;
 
         Stations stations = IRailApiHelper.retrieveAllStations();
 
-        // For testing purpose
+        // START - For testing purpose
         assert stations != null;
         List<Station> stationList = new ArrayList<>();
         Optional<Station> dilbeek =
@@ -31,14 +32,13 @@ public class IRailService {
         assert dilbeek.isPresent();
         stationList.add(dilbeek.get());
         stations.setStationList(stationList);
+        // STOP - For testing purpose
 
         for(Station station : stations.getStationList()){
-            getTrainsForStation(station, date);
+            vehicles.add(getVehiclesForStation(station, date));
         }
 
-
-        throw new NotImplementedException();
-//        return secondsToReadableDate(totalDelayInSeconds);
+        return secondsToReadableDate(totalDelayInSeconds);
     }
 
     /**
@@ -49,25 +49,42 @@ public class IRailService {
      * @return
      * @throws IOException
      */
-    private static List<Liveboard> getTrainsForStation(Station station, Date date) throws IOException {
+    private List<String> getVehiclesForStation(Station station, Calendar date) throws IOException {
+        boolean allTrainsRetrieved = false;
         String time = "0000";
         List<String> trains = new ArrayList<>();
 
-        Liveboard liveboard = IRailApiHelper.retrieveLiveboard(station.getId(), date, "0000");
-        if (Objects.nonNull(liveboard)) {
-            for(Departure departure : liveboard.getDepartures().getDepartureList()) {
-                if(!trains.contains(departure.getStation())) {
-                    trains.add(departure.getStation());
+        while (!allTrainsRetrieved) {
+            Liveboard liveboard = IRailApiHelper.retrieveLiveboard(station.getId(), date, time);
+
+            if (Objects.nonNull(liveboard)) {
+                int index = 0;
+                for (Departure departure : liveboard.getDepartures().getDepartureList()) {
+                    index++;
+                    Calendar departureDateTime = epochToCalendar(departure.getTime());
+
+                    if (departureDateTime.get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
+                        if (!trains.contains(departure.getVehicle())) {
+                            trains.add(departure.getVehicle());
+                        }
+                        if (index == liveboard.getDepartures().getDepartureList().size()) {
+                            time = getTime(departureDateTime);
+                        }
+                    } else {
+                        allTrainsRetrieved = true;
+                        break;
+                    }
                 }
             }
         }
+        return trains;
     }
 
-    public static void handleDepartures(Liveboard liveboard) {
+    private void handleDepartures(Liveboard liveboard) {
         throw new NotImplementedException();
     }
 
-    private static int handleDelay(VehicleRetrieval vehicleRetrieval) {
+    private int handleDelay(VehicleRetrieval vehicleRetrieval) {
         throw new NotImplementedException();
     }
 
@@ -79,14 +96,14 @@ public class IRailService {
         return String.format("%s days %s hours %s minutes", day, hours, minutes);
     }
 
-    public static Calendar epochToCalendar(String timeInSeconds) {
-        Instant instant = Instant.ofEpochSecond(Long.parseLong(timeInSeconds));
+    private Calendar epochToCalendar(long timeInSeconds) {
+        Instant instant = Instant.ofEpochSecond(timeInSeconds);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Date.from(instant));
         return calendar;
     }
 
-    public static String getTime(Calendar calendar) {
+    private String getTime(Calendar calendar) {
         String time;
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minutes = calendar.get(Calendar.MINUTE);

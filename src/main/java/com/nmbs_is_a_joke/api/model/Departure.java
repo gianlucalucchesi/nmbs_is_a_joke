@@ -17,7 +17,7 @@ public class Departure {
     @JsonProperty("stationinfo")
     private Station stationInfo;
     @JsonProperty("time")
-    private int time;
+    private long time;
     @JsonProperty("vehicle")
     private String vehicle;
     @JsonProperty("vehicleinfo")
