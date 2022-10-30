@@ -86,7 +86,12 @@ public class IRailService {
                             vehicles.add(departure.getVehicle());
                         }
                         if (index == liveboard.getDepartures().getDepartureList().size()) {
-                            time = getTime(departureDateTime);
+                            if (index < 2) {
+                                allTrainsRetrieved = true;
+                                break;
+                            } else {
+                                time = getTime(departureDateTime);
+                            }
                         }
                     } else {
                         allTrainsRetrieved = true;
