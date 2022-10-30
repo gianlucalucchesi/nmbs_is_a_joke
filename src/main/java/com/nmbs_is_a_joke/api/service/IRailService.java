@@ -2,39 +2,34 @@ package com.nmbs_is_a_joke.api.service;
 
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
 import com.nmbs_is_a_joke.api.model.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 @Service
 public class IRailService {
-
+    List<String> vehicleList = new ArrayList<>();
+    List<VehicleRetrieval> vehicleDetailsForDateList = new ArrayList<>();
+    int totalDelayedTrains = 0;
+    int totalTrainsCancelled = 0; // TODO
     IRailApiHelper iRailApiHelper;
 
     public IRailService() {
         iRailApiHelper = new IRailApiHelper();
     }
 
-    private static String secondsToReadableDate(int pSeconds) {
-        int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
-        long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
-        long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-//		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
-        return String.format("%s days %s hours %s minutes", day, hours, minutes);
-    }
-
-    public String getTotalDelayForGivenDay(Calendar calendar) throws IOException {
-        List<String> vehicleList = new ArrayList<>();
-        List<VehicleRetrieval> vehicleDetailsForDateList = new ArrayList<>();
+    public int getTotalDelayInSecondsForGivenDay(Calendar calendar) throws IOException {
         int i = 0;
         int totalDelayInSeconds = 0;
-        int totalCanceledTrains = 0; // TODO get total cancelled trains for given day
 
-        Stations stations = iRailApiHelper.retrieveAllStations();
+        Stations stations = this.iRailApiHelper.retrieveAllStations();
         assert stations != null;
         System.out.print("All stations retrieved\r");
 
@@ -53,25 +48,25 @@ public class IRailService {
         for (Station station : stations.getStationList()) {
             i++;
             System.out.printf("Retrieving liveboard for %s (%s/%s)\r", station.getName(), i, stations.getStationList().size());
-            vehicleList.addAll(getVehiclesForStation(station, calendar));
+            this.vehicleList.addAll(getVehiclesForStation(station, calendar));
         }
 
-        vehicleList = removeDuplicates(vehicleList);
+        this.vehicleList = removeDuplicates(this.vehicleList);
         System.out.println();
 
         i = 0;
-        for (String vehicleName : vehicleList) {
+        for (String vehicleName : this.vehicleList) {
             i++;
-            System.out.printf("Retrieving vehicle details of %s (%s/%s)\r", vehicleName, i, vehicleList.size());
-            vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
+            System.out.printf("Retrieving vehicle details of %s (%s/%s)\r", vehicleName, i, this.vehicleList.size());
+            this.vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
         }
 
         System.out.println();
 
-        for (VehicleRetrieval vehicleDetails : vehicleDetailsForDateList) {
-            totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
+        for (VehicleRetrieval vehicleDetails : this.vehicleDetailsForDateList) {
+            totalDelayInSeconds += getDelayForVehicle(vehicleDetails);
         }
-        return secondsToReadableDate(totalDelayInSeconds);
+        return totalDelayInSeconds;
     }
 
     /**
@@ -128,10 +123,14 @@ public class IRailService {
         return vehicleList.stream().distinct().collect(Collectors.toList());
     }
 
-    private int totalDelayForGivenVehicle(VehicleRetrieval vehicleDetail) {
+    private int getDelayForVehicle(VehicleRetrieval vehicleDetail) {
         if (Objects.nonNull(vehicleDetail)) {
             int lastStop = vehicleDetail.getStops().getNumber();
-            return vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
+            int delay = vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
+            if (delay > 0) {
+                this.totalDelayedTrains++;
+            }
+            return delay;
         }
         return 0;
     }
