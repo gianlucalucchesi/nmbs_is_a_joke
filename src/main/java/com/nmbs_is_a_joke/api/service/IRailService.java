@@ -19,10 +19,10 @@ public class IRailService {
     }
 
     public String getTotalDelayForGivenDay(Calendar calendar) throws IOException {
-        List<List<String>> vehiclesPerStationList = new ArrayList<>();
-        List<List<VehicleRetrieval>> vehicleDetailsForDateList = new ArrayList<>();
+        List<String> vehicleList = new ArrayList<>();
+        List<VehicleRetrieval> vehicleDetailsForDateList = new ArrayList<>();
         int totalDelayInSeconds = 0;
-        int totalCanceledTrains = 0;
+        int totalCanceledTrains = 0; // TODO get total cancelled trains for given day
 
         Stations stations = iRailApiHelper.retrieveAllStations();
         assert stations != null;
@@ -40,17 +40,22 @@ public class IRailService {
 //        stations.setStationList(stationList);
         // STOP - For testing purpose
 
+        int i = 0;
         for (Station station : stations.getStationList()) {
-            // FIXME all vehicle should maybe be in a final list<String> instead of List<List<String>>
-            vehiclesPerStationList.add(getVehiclesForStation(station, calendar));
+            i++;
+            System.out.printf("Retrieving liveboard for %s (%s/%s)\r", station.getName(), i, stations.getStationList().size());
+            vehicleList.addAll(getVehiclesForStation(station, calendar));
         }
-        for (List<String> vehiclesPerStation : vehiclesPerStationList) {
-            vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehiclesPerStation, calendar));
+        System.out.println();
+        i = 0;
+        for (String vehicleName : vehicleList) {
+            i++;
+            vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
+            System.out.printf("Details of %s retrieved (%s/%s)\r", vehicleName, i, vehicleList.size());
         }
-        for(List<VehicleRetrieval> vehicleDetailsList : vehicleDetailsForDateList) {
-            for(VehicleRetrieval vehicleDetails : vehicleDetailsList) {
-                totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
-            }
+        System.out.println();
+        for(VehicleRetrieval vehicleDetails : vehicleDetailsForDateList) {
+            totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
         }
         return secondsToReadableDate(totalDelayInSeconds);
     }
@@ -68,7 +73,6 @@ public class IRailService {
         String time = "0000";
         List<String> vehicles = new ArrayList<>();
 
-        System.out.printf("Retrieving liveboard for %s\r", station.getName());
         while (!allTrainsRetrieved) {
             Liveboard liveboard = iRailApiHelper.retrieveLiveboard(station.getId(), date, time);
             if (Objects.nonNull(liveboard)) {
@@ -93,21 +97,11 @@ public class IRailService {
                 allTrainsRetrieved = true;
             }
         }
-        System.out.printf("Liveboard for %s retrieved\r", station.getName());
         return vehicles;
     }
 
-    // FIXME: This should not contain the loop
-    private List<VehicleRetrieval> getVehicleDetailsForDate(List<String> vehicles, Calendar calendar) throws IOException {
-        List<VehicleRetrieval> vehicleDetailsList = new ArrayList<>();
-        int i = 0;
-        for(String vehicleId : vehicles) {
-            i++;
-            VehicleRetrieval vehicleDetails = iRailApiHelper.retrieveVehicle(vehicleId, calendar);
-            System.out.printf("Vehicle details for %s retrieved (%s/%s)\r", vehicleDetails.getVehicle(), i, vehicles.size());
-            vehicleDetailsList.add(vehicleDetails);
-        }
-        return vehicleDetailsList;
+    private VehicleRetrieval getVehicleDetailsForDate(String vehicleId, Calendar calendar) throws IOException {
+        return iRailApiHelper.retrieveVehicle(vehicleId, calendar);
     }
 
     // FIXME check why there is never delay
