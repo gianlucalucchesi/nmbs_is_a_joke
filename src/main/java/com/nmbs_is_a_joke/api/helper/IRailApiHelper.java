@@ -59,7 +59,6 @@ public class IRailApiHelper {
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Stations.class) : null;
     }
 
-    // Addition arrivalDelay of last stop of all trains of given day
     public VehicleRetrieval retrieveVehicle(String vehicleId, Calendar calendar) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         final String endpoint = "/vehicle";

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class IRailService {
@@ -18,9 +19,18 @@ public class IRailService {
         iRailApiHelper = new IRailApiHelper();
     }
 
+    private static String secondsToReadableDate(int pSeconds) {
+        int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
+        long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
+        long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
+//		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
+        return String.format("%s days %s hours %s minutes", day, hours, minutes);
+    }
+
     public String getTotalDelayForGivenDay(Calendar calendar) throws IOException {
         List<String> vehicleList = new ArrayList<>();
         List<VehicleRetrieval> vehicleDetailsForDateList = new ArrayList<>();
+        int i = 0;
         int totalDelayInSeconds = 0;
         int totalCanceledTrains = 0; // TODO get total cancelled trains for given day
 
@@ -40,21 +50,25 @@ public class IRailService {
 //        stations.setStationList(stationList);
         // STOP - For testing purpose
 
-        int i = 0;
         for (Station station : stations.getStationList()) {
             i++;
             System.out.printf("Retrieving liveboard for %s (%s/%s)\r", station.getName(), i, stations.getStationList().size());
             vehicleList.addAll(getVehiclesForStation(station, calendar));
         }
+
+        vehicleList = removeDuplicates(vehicleList);
         System.out.println();
+
         i = 0;
         for (String vehicleName : vehicleList) {
             i++;
+            System.out.printf("Retrieving vehicle details of %s (%s/%s)\r", vehicleName, i, vehicleList.size());
             vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
-            System.out.printf("Details of %s retrieved (%s/%s)\r", vehicleName, i, vehicleList.size());
         }
+
         System.out.println();
-        for(VehicleRetrieval vehicleDetails : vehicleDetailsForDateList) {
+
+        for (VehicleRetrieval vehicleDetails : vehicleDetailsForDateList) {
             totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
         }
         return secondsToReadableDate(totalDelayInSeconds);
@@ -63,6 +77,7 @@ public class IRailService {
     /**
      * Retrieve liveboard for giver station.
      * Liveboard is limited to 50 results per request so iterated until full day is received
+     *
      * @param station
      * @param date
      * @return
@@ -82,7 +97,7 @@ public class IRailService {
                     Calendar departureDateTime = epochToCalendar(departure.getTime());
 
                     if (departureDateTime.get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH)) {
-                        if (!vehicles.contains(departure.getVehicle())) {
+                        if (!vehicles.contains(departure.getVehicle()) && !departure.getVehicle().contains("BUS")) {
                             vehicles.add(departure.getVehicle());
                         }
                         if (index == liveboard.getDepartures().getDepartureList().size()) {
@@ -109,18 +124,16 @@ public class IRailService {
         return iRailApiHelper.retrieveVehicle(vehicleId, calendar);
     }
 
-    // FIXME check why there is never delay
-    private int totalDelayForGivenVehicle(VehicleRetrieval vehicleDetail) {
-        int lastStop = vehicleDetail.getStops().getNumber();
-        return vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
+    private List<String> removeDuplicates(List<String> vehicleList) {
+        return vehicleList.stream().distinct().collect(Collectors.toList());
     }
 
-    private static String secondsToReadableDate(int pSeconds) {
-        int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
-        long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
-        long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-//		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
-        return String.format("%s days %s hours %s minutes", day, hours, minutes);
+    private int totalDelayForGivenVehicle(VehicleRetrieval vehicleDetail) {
+        if (Objects.nonNull(vehicleDetail)) {
+            int lastStop = vehicleDetail.getStops().getNumber();
+            return vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
+        }
+        return 0;
     }
 
     private Calendar epochToCalendar(long timeInSeconds) {
