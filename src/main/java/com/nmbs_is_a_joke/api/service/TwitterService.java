@@ -44,8 +44,14 @@ public class TwitterService {
         int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
         long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
         long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-//		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
-        return String.format("%s days %s hours %s minutes", day, hours, minutes);
+		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
+
+        String dayString = day == 1 ? "day" : "days";
+        String hourString = hours == 1 ? "hour" : "hours";
+        String minutesString = minutes == 1 ? "minute" : "minutes";
+        String secondsString = seconds == 1 ? "second" : "seconds";
+
+        return String.format("%s %s, %s %s, %s %s",day, dayString, hours, hourString, minutes, minutesString);
     }
 
 }
