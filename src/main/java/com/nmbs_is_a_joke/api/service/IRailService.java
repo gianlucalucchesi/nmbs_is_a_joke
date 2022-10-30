@@ -137,10 +137,12 @@ public class IRailService {
     }
 
     private void handleCancellation(VehicleRetrieval vehicleDetail) {
-        for (Stop stop : vehicleDetail.getStops().getStopList()) {
-            if (!stop.getCanceled().isEmpty() && !stop.getCanceled().equals("0")) {
-                totalTrainsCancelled++;
-                break;
+        if (Objects.nonNull(vehicleDetail)) {
+            for (Stop stop : vehicleDetail.getStops().getStopList()) {
+                if (!stop.getCanceled().isEmpty() && !stop.getCanceled().equals("0")) {
+                    totalTrainsCancelled++;
+                    break;
+                }
             }
         }
     }
