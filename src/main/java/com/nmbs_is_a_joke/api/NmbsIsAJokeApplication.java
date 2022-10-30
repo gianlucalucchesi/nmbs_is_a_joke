@@ -16,7 +16,7 @@ public class NmbsIsAJokeApplication {
         System.out.printf("START: %s%n", System.currentTimeMillis());
         IRailService iRailService = new IRailService();
         Calendar today = Calendar.getInstance();
-        today.add(Calendar.DAY_OF_MONTH, -2);
+        today.add(Calendar.DAY_OF_MONTH, -10);
         String totalDelay = iRailService.getTotalDelayForGivenDay(today);
         System.out.println(totalDelay);
         System.out.printf("STOP: %s%n", System.currentTimeMillis());

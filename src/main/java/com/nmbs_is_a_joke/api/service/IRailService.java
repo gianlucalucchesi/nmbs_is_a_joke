@@ -25,28 +25,24 @@ public class IRailService {
         int totalCanceledTrains = 0;
 
         Stations stations = iRailApiHelper.retrieveAllStations();
+        assert stations != null;
         System.out.print("All stations retrieved\r");
 
         // START - For testing purpose
-        assert stations != null;
-        List<Station> stationList = new ArrayList<>();
-        Optional<Station> dilbeek =
-                stations.getStationList()
-                        .stream()
-                        .filter(station -> station.getName().equalsIgnoreCase("Brussels-Central"))
-                        .findFirst();
-        assert dilbeek.isPresent();
-        stationList.add(dilbeek.get());
-        stations.setStationList(stationList);
+//        List<Station> stationList = new ArrayList<>();
+//        Optional<Station> dilbeek =
+//                stations.getStationList()
+//                        .stream()
+//                        .filter(station -> station.getName().equalsIgnoreCase("Dilbeek"))
+//                        .findFirst();
+//        assert dilbeek.isPresent();
+//        stationList.add(dilbeek.get());
+//        stations.setStationList(stationList);
         // STOP - For testing purpose
 
-        int i = 0;
         for (Station station : stations.getStationList()) {
+            // FIXME all vehicle should maybe be in a final list<String> instead of List<List<String>>
             vehiclesPerStationList.add(getVehiclesForStation(station, calendar));
-            i++;
-            if (i == 10) {
-                break;
-            }
         }
         for (List<String> vehiclesPerStation : vehiclesPerStationList) {
             vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehiclesPerStation, calendar));
@@ -114,6 +110,7 @@ public class IRailService {
         return vehicleDetailsList;
     }
 
+    // FIXME check why there is never delay
     private int totalDelayForGivenVehicle(VehicleRetrieval vehicleDetail) {
         int lastStop = vehicleDetail.getStops().getNumber();
         return vehicleDetail.getStops().getStopList().get(lastStop - 1).getDelay();
