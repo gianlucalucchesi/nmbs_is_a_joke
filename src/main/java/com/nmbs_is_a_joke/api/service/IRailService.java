@@ -20,35 +20,42 @@ public class IRailService {
 
     public String getTotalDelayForGivenDay(Calendar calendar) throws IOException {
         List<List<String>> vehiclesPerStationList = new ArrayList<>();
-        List<VehicleRetrieval> vehicleDetailsForDate = new ArrayList<>();
+        List<List<VehicleRetrieval>> vehicleDetailsForDateList = new ArrayList<>();
         int totalDelayInSeconds = 0;
         int totalCanceledTrains = 0;
 
         Stations stations = iRailApiHelper.retrieveAllStations();
+        System.out.print("All stations retrieved\r");
 
         // START - For testing purpose
-//        assert stations != null;
-//        List<Station> stationList = new ArrayList<>();
-//        Optional<Station> dilbeek =
-//                stations.getStationList()
-//                        .stream()
-//                        .filter(station -> station.getName().equalsIgnoreCase("Dilbeek"))
-//                        .findFirst();
-//        assert dilbeek.isPresent();
-//        stationList.add(dilbeek.get());
-//        stations.setStationList(stationList);
+        assert stations != null;
+        List<Station> stationList = new ArrayList<>();
+        Optional<Station> dilbeek =
+                stations.getStationList()
+                        .stream()
+                        .filter(station -> station.getName().equalsIgnoreCase("Brussels-Central"))
+                        .findFirst();
+        assert dilbeek.isPresent();
+        stationList.add(dilbeek.get());
+        stations.setStationList(stationList);
         // STOP - For testing purpose
 
-        for(Station station : stations.getStationList()){
+        int i = 0;
+        for (Station station : stations.getStationList()) {
             vehiclesPerStationList.add(getVehiclesForStation(station, calendar));
+            i++;
+            if (i == 10) {
+                break;
+            }
         }
-        for(List<String> vehiclesPerStation : vehiclesPerStationList) {
-            vehicleDetailsForDate = getVehicleDetailsForDate(vehiclesPerStation, calendar);
+        for (List<String> vehiclesPerStation : vehiclesPerStationList) {
+            vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehiclesPerStation, calendar));
         }
-        for(VehicleRetrieval vehicleDetails : vehicleDetailsForDate) {
-            totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
+        for(List<VehicleRetrieval> vehicleDetailsList : vehicleDetailsForDateList) {
+            for(VehicleRetrieval vehicleDetails : vehicleDetailsList) {
+                totalDelayInSeconds += totalDelayForGivenVehicle(vehicleDetails);
+            }
         }
-
         return secondsToReadableDate(totalDelayInSeconds);
     }
 
@@ -65,9 +72,9 @@ public class IRailService {
         String time = "0000";
         List<String> vehicles = new ArrayList<>();
 
+        System.out.printf("Retrieving liveboard for %s\r", station.getName());
         while (!allTrainsRetrieved) {
             Liveboard liveboard = iRailApiHelper.retrieveLiveboard(station.getId(), date, time);
-
             if (Objects.nonNull(liveboard)) {
                 int index = 0;
                 for (Departure departure : liveboard.getDepartures().getDepartureList()) {
@@ -86,15 +93,22 @@ public class IRailService {
                         break;
                     }
                 }
+            } else {
+                allTrainsRetrieved = true;
             }
         }
+        System.out.printf("Liveboard for %s retrieved\r", station.getName());
         return vehicles;
     }
 
+    // FIXME: This should not contain the loop
     private List<VehicleRetrieval> getVehicleDetailsForDate(List<String> vehicles, Calendar calendar) throws IOException {
         List<VehicleRetrieval> vehicleDetailsList = new ArrayList<>();
+        int i = 0;
         for(String vehicleId : vehicles) {
+            i++;
             VehicleRetrieval vehicleDetails = iRailApiHelper.retrieveVehicle(vehicleId, calendar);
+            System.out.printf("Vehicle details for %s retrieved (%s/%s)\r", vehicleDetails.getVehicle(), i, vehicles.size());
             vehicleDetailsList.add(vehicleDetails);
         }
         return vehicleDetailsList;
