@@ -189,3 +189,5 @@ fabric.properties
 
 !.idea/codeStyles
 !.idea/runConfigurations
+
+twitter4j.properties
