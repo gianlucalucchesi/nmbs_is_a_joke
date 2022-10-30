@@ -65,6 +65,7 @@ public class IRailService {
 
         for (VehicleRetrieval vehicleDetails : this.vehicleDetailsForDateList) {
             totalDelayInSeconds += getDelayForVehicle(vehicleDetails);
+            handleCancellation(vehicleDetails);
         }
         return totalDelayInSeconds;
     }
@@ -133,6 +134,15 @@ public class IRailService {
             return delay;
         }
         return 0;
+    }
+
+    private void handleCancellation(VehicleRetrieval vehicleDetail) {
+        for (Stop stop : vehicleDetail.getStops().getStopList()) {
+            if (!stop.getCanceled().isEmpty() && !stop.getCanceled().equals("0")) {
+                totalTrainsCancelled++;
+                break;
+            }
+        }
     }
 
     private Calendar epochToCalendar(long timeInSeconds) {

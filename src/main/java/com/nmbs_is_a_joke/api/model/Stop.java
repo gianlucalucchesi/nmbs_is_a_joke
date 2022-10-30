@@ -31,17 +31,17 @@ public class Stop {
     @JsonProperty("departureDelay")
     private int departureDelay;
     @JsonProperty("departureCanceled")
-    private String departureCanceled;
+    private int departureCanceled;
     @JsonProperty("scheduledDepartureTime")
-    private String scheduledDepartureTime;
+    private long scheduledDepartureTime;
     @JsonProperty("scheduledArrivalTime")
-    private String scheduledArrivalTime;
+    private long scheduledArrivalTime;
     @JsonProperty("arrivalDelay")
     private int arrivalDelay;
     @JsonProperty("arrivalCanceled")
-    private String arrivalCanceled;
+    private int arrivalCanceled;
     @JsonProperty("isExtraStop")
-    private String isExtraStop;
+    private int isExtraStop;
     @JsonProperty("departureConnection")
     private String departureConnection;
     @JsonProperty("occupancy")

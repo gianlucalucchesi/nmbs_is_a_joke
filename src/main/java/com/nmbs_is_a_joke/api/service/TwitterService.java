@@ -2,6 +2,8 @@ package com.nmbs_is_a_joke.api.service;
 
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -13,8 +15,9 @@ public class TwitterService {
         String date = handleDate(calendar);
         String accumulatedDelay = handleAccumulatedDelay(totalDelayInSeconds);
 
-        final double delayPercentage = (double)(totalDelayedTrains / totalJourneys) * 100;
-        final double cancellationPercentage = (double)(totalCanceledJourneys / totalJourneys) * 100;
+        final double delayPercentage = ((double)totalDelayedTrains / (double)totalJourneys) * 100;
+        final double cancellationPercentage = ((double)totalCanceledJourneys / (double)totalJourneys) * 100;
+        NumberFormat nf = new DecimalFormat("##.#");
 
         return String.format(
                 "%s:\n " +
@@ -25,9 +28,9 @@ public class TwitterService {
                 date,
                 totalJourneys,
                 totalDelayedTrains,
-                delayPercentage,
+                nf.format(delayPercentage),
                 totalCanceledJourneys,
-                cancellationPercentage,
+                nf.format(cancellationPercentage),
                 accumulatedDelay
         );
     }
