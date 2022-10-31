@@ -1,6 +1,7 @@
 package com.nmbs_is_a_joke.api.service;
 
 import com.nmbs_is_a_joke.api.helper.TwitterHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import twitter4j.TwitterException;
 
@@ -10,6 +11,7 @@ import java.util.Calendar;
 @Service
 public class NmbsIsAJokeService {
 
+    @Scheduled(fixedDelay = 86400000)
     public static void runNmbsIsAJokeApplication() throws IOException, TwitterException {
         IRailService iRailService = new IRailService();
         TwitterService twitterService = new TwitterService();
