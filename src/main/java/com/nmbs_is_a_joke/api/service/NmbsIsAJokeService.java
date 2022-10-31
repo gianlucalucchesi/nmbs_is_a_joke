@@ -11,7 +11,13 @@ import java.util.Calendar;
 @Service
 public class NmbsIsAJokeService {
 
-    @Scheduled(cron = "0 30 22 * * *")
+    /**
+     * https://reflectoring.io/spring-scheduler/
+     *
+     * @throws IOException
+     * @throws TwitterException
+     */
+    @Scheduled(cron = "0 30 22 * * *") // Every day at 22h30
     public static void runNmbsIsAJokeApplication() throws IOException, TwitterException {
         IRailService iRailService = new IRailService();
         TwitterService twitterService = new TwitterService();
