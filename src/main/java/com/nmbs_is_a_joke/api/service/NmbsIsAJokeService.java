@@ -11,7 +11,7 @@ import java.util.Calendar;
 @Service
 public class NmbsIsAJokeService {
 
-    @Scheduled(fixedDelay = 86400000)
+    @Scheduled(cron = "* 30 22 * * *")
     public static void runNmbsIsAJokeApplication() throws IOException, TwitterException {
         IRailService iRailService = new IRailService();
         TwitterService twitterService = new TwitterService();

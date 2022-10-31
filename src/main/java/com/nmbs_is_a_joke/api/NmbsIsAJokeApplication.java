@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NmbsIsAJokeApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NmbsIsAJokeApplication.class, args).close();
+        SpringApplication.run(NmbsIsAJokeApplication.class, args);
     }
 
 }
