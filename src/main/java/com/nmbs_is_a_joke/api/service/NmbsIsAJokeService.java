@@ -23,7 +23,6 @@ public class NmbsIsAJokeService {
         TwitterService twitterService = new TwitterService();
         TwitterHelper twitterHelper = new TwitterHelper();
 
-        System.out.printf("START: %s%n", System.currentTimeMillis());
         Calendar today = Calendar.getInstance();
 
         int totalDelayInSeconds = iRailService.getTotalDelayInSecondsForGivenDay(today);
@@ -33,8 +32,6 @@ public class NmbsIsAJokeService {
 
         String tweetBody = twitterService.getTweetBody(today, totalJourneys, totalDelayedTrains, totalCancelledJourneys, totalDelayInSeconds);
         twitterHelper.postTweet(tweetBody);
-
-        System.out.printf("STOP: %s%n", System.currentTimeMillis());
     }
 
 }
