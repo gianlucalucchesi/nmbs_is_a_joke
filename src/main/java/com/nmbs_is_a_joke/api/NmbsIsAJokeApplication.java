@@ -14,7 +14,7 @@ import java.util.Calendar;
 public class NmbsIsAJokeApplication {
 
     public static void main(String[] args) throws IOException, TwitterException {
-        SpringApplication.run(NmbsIsAJokeApplication.class, args);
+        SpringApplication.run(NmbsIsAJokeApplication.class, args).close();
 
         IRailService iRailService = new IRailService();
         TwitterService twitterService = new TwitterService();
