@@ -23,10 +23,4 @@ public class TwitterHelper {
         twitter.updateStatus(tweet);
     }
 
-//    Le mercredi 26 octobre 2022 :
-//    🚆 Nombre de voyages : 17519
-//    ⏰ Trains en retards : 979 (5.6%)
-//    ❗ Services partiels : 191 (1.1%)
-//    🗑️ Trains supprimés : 326 (1.9%)
-//    ⌚ Retard cumulé : 1 semaine, 1 jour, 10 heures
 }
