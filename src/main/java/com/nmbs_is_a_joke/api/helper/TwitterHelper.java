@@ -13,7 +13,6 @@ import twitter4j.TwitterFactory;
  * ==> can be retrieved from Twitter Developer Platform
  * https://www.youtube.com/watch?v=yROTjD7Tl-0
  * https://www.youtube.com/watch?v=Ak37Ri06faY
- *
  */
 public class TwitterHelper {
 

@@ -15,17 +15,17 @@ public class TwitterService {
         String date = handleDate(calendar);
         String accumulatedDelay = handleAccumulatedDelay(totalDelayInSeconds);
 
-        final double delayPercentage = ((double)totalDelayedTrains / (double)totalJourneys) * 100;
-        final double cancellationPercentage = ((double)totalCanceledJourneys / (double)totalJourneys) * 100;
+        final double delayPercentage = ((double) totalDelayedTrains / (double) totalJourneys) * 100;
+        final double cancellationPercentage = ((double) totalCanceledJourneys / (double) totalJourneys) * 100;
         NumberFormat nf = new DecimalFormat("##.#");
 
         return String.format(
                 "%s:\n " +
-                "🚆 Total journeys: %s \n " +
-                "⏰ Trains delayed: %s (%s%%)\n " +
-                "🗑️ Trains cancelled: %s (%s%%)\n " +
-                "🕓 Accumulated delay: %s \n " +
-                "#NMBS #SNCB #BelgianRail",
+                        "🚆 Total journeys: %s \n " +
+                        "⏰ Trains delayed: %s (%s%%)\n " +
+                        "🗑️ Trains cancelled: %s (%s%%)\n " +
+                        "🕓 Accumulated delay: %s \n " +
+                        "#NMBS #SNCB #BelgianRail",
                 date,
                 totalJourneys,
                 totalDelayedTrains,
@@ -45,14 +45,14 @@ public class TwitterService {
         int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
         long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
         long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-		long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
+        long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
 
         String dayString = day == 1 ? "day" : "days";
         String hourString = hours == 1 ? "hour" : "hours";
         String minutesString = minutes == 1 ? "minute" : "minutes";
         String secondsString = seconds == 1 ? "second" : "seconds";
 
-        return String.format("%s %s, %s %s, %s %s",day, dayString, hours, hourString, minutes, minutesString);
+        return String.format("%s %s, %s %s, %s %s", day, dayString, hours, hourString, minutes, minutesString);
     }
 
 }
