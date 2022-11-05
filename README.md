@@ -41,6 +41,7 @@ OpenJDK 64-Bit Server VM (build 11.0.16+8-post-Debian-1deb11u1, mixed mode)
 
 ***Attention***: the application will close together with the SSH connection. See the following section to create an automated service to avoid this!
 
-These steps have been found on the following [Medium post from Stuart Yee](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587).
-
 ### Creating a service
+
+These steps have been found on the following [Medium post from Stuart Yee](https://medium.com/geekculture/turn-your-raspberry-pi-into-a-server-to-run-your-java-spring-mvc-app-862214279587). <br/>
+https://ubiq.co/tech-blog/how-to-change-port-number-in-apache-in-ubuntu/
