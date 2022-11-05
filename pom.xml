@@ -14,7 +14,7 @@
     <name>nmbs_is_a_joke</name>
     <description>NMBS is a joke</description>
     <properties>
-        <java.version>19</java.version>
+        <java.version>11</java.version>
     </properties>
     <dependencies>
         <dependency>
