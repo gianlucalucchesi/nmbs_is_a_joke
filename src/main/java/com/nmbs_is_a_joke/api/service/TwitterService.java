@@ -24,7 +24,7 @@ public class TwitterService {
                         "🚆 Total journeys: %s \n " +
                         "⏰ Trains delayed: %s (%s%%)\n " +
                         "🗑️ Trains cancelled: %s (%s%%)\n " +
-                        "🕓 Accumulated delay: %s \n " +
+                        "⌚️ Accumulated delay: %s \n " +
                         "#NMBS #SNCB #BelgianRail",
                 date,
                 totalJourneys,
@@ -52,7 +52,8 @@ public class TwitterService {
         String minutesString = minutes == 1 ? "minute" : "minutes";
         String secondsString = seconds == 1 ? "second" : "seconds";
 
-        return String.format("%s %s, %s %s, %s %s", day, dayString, hours, hourString, minutes, minutesString);
+        return day == 0 ? String.format("%sh:%smin", hours, minutes) :
+                String.format("%s %s, %s %s, %s %s", day, dayString, hours, hourString, minutes, minutesString);
     }
 
 }
