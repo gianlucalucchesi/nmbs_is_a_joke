@@ -45,12 +45,13 @@ public class TwitterService {
         int day = (int) TimeUnit.SECONDS.toDays(pSeconds);
         long hours = TimeUnit.SECONDS.toHours(pSeconds) - (day * 24L);
         long minutes = TimeUnit.SECONDS.toMinutes(pSeconds) - (TimeUnit.SECONDS.toHours(pSeconds) * 60);
-        long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60); // Always zero
+        // Always zero as minimum train delay is 1min
+//        long seconds = TimeUnit.SECONDS.toSeconds(pSeconds) - (TimeUnit.SECONDS.toMinutes(pSeconds) * 60);
 
         String dayString = day == 1 ? "day" : "days";
         String hourString = hours == 1 ? "hour" : "hours";
         String minutesString = minutes == 1 ? "minute" : "minutes";
-        String secondsString = seconds == 1 ? "second" : "seconds";
+//        String secondsString = seconds == 1 ? "second" : "seconds";
 
         return day == 0 ? String.format("%sh:%smin", hours, minutes) :
                 String.format("%s %s, %s %s, %s %s", day, dayString, hours, hourString, minutes, minutesString);
