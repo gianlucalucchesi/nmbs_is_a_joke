@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -86,6 +87,7 @@ public class IRailApiHelper {
         try {
             URL url = new URL(uriBuilder.toString());
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(5000); // https://stackoverflow.com/a/2799955/10470183
             httpURLConnection.setRequestMethod("GET");
 
             if (httpURLConnection.getResponseCode() == 200) {
@@ -99,7 +101,10 @@ public class IRailApiHelper {
             } else if (httpURLConnection.getResponseCode() == 503) {
                 System.out.println("########## 503 Too Many Requests");
             }
-        } catch (IOException e) {
+        } catch (SocketTimeoutException e) {
+            return null;
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             if (Objects.nonNull(reader)) {
