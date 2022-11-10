@@ -56,6 +56,12 @@
             <artifactId>twitter4j-stream</artifactId>
             <version>4.0.7</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.4.4</version>
+        </dependency>
     </dependencies>
 
     <build>
