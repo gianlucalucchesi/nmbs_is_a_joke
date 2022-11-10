@@ -1,10 +1,12 @@
 package com.nmbs_is_a_joke.api.helper;
 
+import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmbs_is_a_joke.api.model.Liveboard;
 import com.nmbs_is_a_joke.api.model.Stations;
 import com.nmbs_is_a_joke.api.model.VehicleRetrieval;
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -23,6 +25,12 @@ import java.util.Objects;
 public class IRailApiHelper {
     final static String host = "api.irail.be";
     final static String scheme = "https";
+    ch.qos.logback.classic.Logger log =
+            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
+
+    public IRailApiHelper() {
+        log.setLevel(Level.INFO);
+    }
 
     public Liveboard retrieveLiveboard(String stationId, Calendar calendar, String time) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -83,9 +91,10 @@ public class IRailApiHelper {
     private String getRequest(URIBuilder uriBuilder) throws IOException {
         HttpURLConnection httpURLConnection = null;
         BufferedReader reader = null;
+        URL url = null;
 
         try {
-            URL url = new URL(uriBuilder.toString());
+            url = new URL(uriBuilder.toString());
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(5000); // https://stackoverflow.com/a/2799955/10470183
             httpURLConnection.setRequestMethod("GET");
@@ -102,6 +111,7 @@ public class IRailApiHelper {
                 System.out.println("########## 503 Too Many Requests");
             }
         } catch (SocketTimeoutException e) {
+            log.info("########## Connection timeout: {}", url);
             return null;
         }
         catch (IOException e) {

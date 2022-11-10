@@ -1,9 +1,11 @@
 package com.nmbs_is_a_joke.api.service;
 
+import ch.qos.logback.classic.Level;
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
 import com.nmbs_is_a_joke.api.model.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,9 +22,12 @@ public class IRailService {
     int totalDelayedTrains = 0;
     int totalTrainsCancelled = 0; // TODO
     IRailApiHelper iRailApiHelper;
+    ch.qos.logback.classic.Logger log =
+            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
 
     public IRailService() {
         iRailApiHelper = new IRailApiHelper();
+        log.setLevel(Level.INFO);
     }
 
     public int getTotalDelayInSecondsForGivenDay(Calendar calendar) throws IOException {
@@ -31,6 +36,7 @@ public class IRailService {
 
         Stations stations = this.iRailApiHelper.retrieveAllStations();
         assert stations != null;
+        log.info("All stations retrieved\r");
         System.out.print("All stations retrieved\r");
 
         // START - For testing purpose
@@ -48,6 +54,7 @@ public class IRailService {
         for (Station station : stations.getStationList()) {
             i++;
             System.out.printf("Retrieving liveboard for %s (%s/%s)\r", station.getName(), i, stations.getStationList().size());
+            log.info("Retrieving liveboard for {} ({}/{})\r", station.getName(), i, stations.getStationList().size());
             this.vehicleList.addAll(getVehiclesForStation(station, calendar));
         }
 
@@ -58,6 +65,7 @@ public class IRailService {
         for (String vehicleName : this.vehicleList) {
             i++;
             System.out.printf("Retrieving vehicle details of %s (%s/%s)\r", vehicleName, i, this.vehicleList.size());
+            log.info("Retrieving vehicle details of {} ({}/{})\r", vehicleName, i, this.vehicleList.size());
             this.vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
         }
 
