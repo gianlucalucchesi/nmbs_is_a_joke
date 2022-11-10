@@ -97,6 +97,7 @@ public class IRailService {
                             vehicles.add(departure.getVehicle());
                         }
                         if (index == liveboard.getDepartures().getDepartureList().size()) {
+                            // If there is only 1 or less we will keep retrieving the same one
                             if (index < 2) {
                                 allTrainsRetrieved = true;
                                 break;
