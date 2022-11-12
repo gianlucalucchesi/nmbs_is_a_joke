@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.gianlucalucchesi</groupId>
     <artifactId>nmbs_is_a_joke</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <name>nmbs_is_a_joke</name>
     <description>NMBS is a joke</description>
     <properties>
