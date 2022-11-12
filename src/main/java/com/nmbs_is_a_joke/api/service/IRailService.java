@@ -20,7 +20,7 @@ public class IRailService {
     List<String> vehicleList = new ArrayList<>();
     List<VehicleRetrieval> vehicleDetailsForDateList = new ArrayList<>();
     int totalDelayedTrains = 0;
-    int totalTrainsCancelled = 0; // TODO
+    int totalTrainsCancelled = 0;
     IRailApiHelper iRailApiHelper;
     ch.qos.logback.classic.Logger log =
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
@@ -37,7 +37,6 @@ public class IRailService {
         Stations stations = this.iRailApiHelper.retrieveAllStations();
         assert stations != null;
         log.info("All stations retrieved\r");
-        System.out.print("All stations retrieved\r");
 
         // START - For testing purpose
 //        List<Station> stationList = new ArrayList<>();
@@ -53,7 +52,6 @@ public class IRailService {
 
         for (Station station : stations.getStationList()) {
             i++;
-            System.out.printf("Retrieving liveboard for %s (%s/%s)\r", station.getName(), i, stations.getStationList().size());
             log.info("Retrieving liveboard for {} ({}/{})\r", station.getName(), i, stations.getStationList().size());
             this.vehicleList.addAll(getVehiclesForStation(station, calendar));
         }
@@ -75,6 +73,7 @@ public class IRailService {
             totalDelayInSeconds += getDelayForVehicle(vehicleDetails);
             handleCancellation(vehicleDetails);
         }
+        log.info("Total delay in seconds: {}", totalDelayInSeconds);
         return totalDelayInSeconds;
     }
 
@@ -154,6 +153,7 @@ public class IRailService {
                 }
             }
         }
+        log.info("Total cancelled trains: {}", totalTrainsCancelled);
     }
 
     private Calendar epochToCalendar(long timeInSeconds) {

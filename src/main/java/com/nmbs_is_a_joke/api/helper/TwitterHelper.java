@@ -1,5 +1,7 @@
 package com.nmbs_is_a_joke.api.helper;
 
+import ch.qos.logback.classic.Level;
+import org.slf4j.LoggerFactory;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -16,10 +18,18 @@ import twitter4j.TwitterFactory;
  */
 public class TwitterHelper {
 
+    ch.qos.logback.classic.Logger log =
+            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
+
+    public TwitterHelper() {
+        log.setLevel(Level.INFO);
+    }
+
     public void postTweet(String tweet) throws TwitterException {
         TwitterFactory tf = new TwitterFactory();
         Twitter twitter = tf.getInstance();
         twitter.updateStatus(tweet);
+        log.info("Tweet sent: {}", tweet);
     }
 
 }
