@@ -113,7 +113,6 @@ public class IRailApiHelper {
             }
         } catch (SocketTimeoutException e) {
             log.info("########## Connection timeout: {}", url);
-            return null;
         } catch (RuntimeException e) {
             log.info("########## RuntimeException: {}", e.toString());
         }
