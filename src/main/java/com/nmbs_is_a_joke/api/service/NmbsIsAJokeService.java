@@ -17,7 +17,7 @@ public class NmbsIsAJokeService {
      * @throws IOException
      * @throws TwitterException
      */
-    @Scheduled(cron = "0 30 22 * * *") // Every day at 22h30
+    @Scheduled(cron = "0 39 23 * * *") // Every day at 22h30
     public static void runNmbsIsAJokeApplication() throws IOException, TwitterException {
         IRailService iRailService = new IRailService();
         TwitterService twitterService = new TwitterService();

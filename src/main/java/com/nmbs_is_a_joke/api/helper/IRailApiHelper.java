@@ -46,8 +46,9 @@ public class IRailApiHelper {
                 .addParameter("id", stationId)
                 .addParameter("date", strDate)
                 .addParameter("time", time) // time is formatted as hhmm.
-                .addParameter("arrdep", "departure") // arivals or departures
-                .addParameter("format", "json").addParameter("lang", "en");
+                .addParameter("arrdep", "departure") // arrivals or departures
+                .addParameter("format", "json")
+                .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
         return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
@@ -103,12 +104,12 @@ public class IRailApiHelper {
                 reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 String inputLine;
                 StringBuilder content = new StringBuilder();
-                while ((inputLine = reader.readLine()) != null) {
+                while (Objects.nonNull((inputLine = reader.readLine()))) {
                     content.append(inputLine);
                 }
                 return content.toString();
-            } else if (httpURLConnection.getResponseCode() == 503) {
-                System.out.println("########## 503 Too Many Requests");
+            } else {
+                log.info("########## HTTP ERROR {}: {}", httpURLConnection.getResponseCode(), httpURLConnection.getResponseMessage());
             }
         } catch (SocketTimeoutException e) {
             log.info("########## Connection timeout: {}", url);
@@ -130,7 +131,7 @@ public class IRailApiHelper {
     }
 
     private Date getDateFromCalendar(Calendar calendar) {
-        return calendar.getTime(); // Called getTime but return date
+        return calendar.getTime(); // Called getTime but returns date
     }
 
 }
