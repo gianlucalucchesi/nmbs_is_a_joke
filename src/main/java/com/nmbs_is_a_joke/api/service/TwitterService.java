@@ -53,7 +53,7 @@ public class TwitterService {
         String minutesString = minutes == 1 ? "minute" : "minutes";
 //        String secondsString = seconds == 1 ? "second" : "seconds";
 
-        return day == 0 ? String.format("%sh%smin", hours, minutes) :
+        return day == 0 ? String.format("%sh %smin", hours, minutes) :
                 String.format("%s %s, %s %s, %s %s", day, dayString, hours, hourString, minutes, minutesString);
     }
 
