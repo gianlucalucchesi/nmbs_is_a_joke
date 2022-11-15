@@ -73,6 +73,7 @@ public class IRailService {
             totalDelayInSeconds += getDelayForVehicle(vehicleDetails);
             handleCancellation(vehicleDetails);
         }
+        log.info("Total cancelled trains: {}", this.totalTrainsCancelled);
         log.info("Total delay in seconds: {}", totalDelayInSeconds);
         return totalDelayInSeconds;
     }
@@ -153,7 +154,6 @@ public class IRailService {
                 }
             }
         }
-        log.info("Total cancelled trains: {}", totalTrainsCancelled);
     }
 
     private Calendar epochToCalendar(long timeInSeconds) {
