@@ -25,7 +25,7 @@ public class TwitterService {
                         "⏰ Trains delayed: %s (%s%%)\n " +
                         "🗑️ Trains cancelled: %s (%s%%)\n " +
                         "⌚️ Accumulated delay: %s \n " +
-                        "#NMBS #SNCB #BelgianRail",
+                        "#NMBS #SNCB #BelgianTrain",
                 date,
                 totalJourneys,
                 totalDelayedTrains,
