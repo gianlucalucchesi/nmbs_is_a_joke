@@ -94,7 +94,7 @@ public class IRailService {
 
         while (!allTrainsRetrieved) {
             Liveboard liveboard = iRailApiHelper.retrieveLiveboard(station.getId(), date, time);
-            if (Objects.nonNull(liveboard)) {
+            if (Objects.nonNull(liveboard) && liveboard.getDepartures().getDepartureList().size() > 0) {
                 int index = 0;
                 for (Departure departure : liveboard.getDepartures().getDepartureList()) {
                     index++;
