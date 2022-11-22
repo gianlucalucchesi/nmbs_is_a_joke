@@ -1,6 +1,8 @@
 package com.nmbs_is_a_joke.api.service;
 
+import ch.qos.logback.classic.Level;
 import com.nmbs_is_a_joke.api.helper.TwitterHelper;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import twitter4j.TwitterException;
@@ -10,6 +12,12 @@ import java.util.Calendar;
 
 @Service
 public class NmbsIsAJokeService {
+
+    static ch.qos.logback.classic.Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
+
+    public NmbsIsAJokeService() {
+        log.setLevel(Level.INFO);
+    }
 
     /**
      * https://reflectoring.io/spring-scheduler/
@@ -30,8 +38,13 @@ public class NmbsIsAJokeService {
         int totalCancelledJourneys = iRailService.getTotalTrainsCancelled();
         int totalJourneys = iRailService.getVehicleList().size();
 
-        String tweetBody = twitterService.getTweetBody(today, totalJourneys, totalDelayedTrains, totalCancelledJourneys, totalDelayInSeconds);
-        twitterHelper.postTweet(tweetBody);
+        // If there are not at least 50 trains, there is an issue with the API
+        if (totalJourneys > 50) {
+            String tweetBody = twitterService.getTweetBody(today, totalJourneys, totalDelayedTrains, totalCancelledJourneys, totalDelayInSeconds);
+            twitterHelper.postTweet(tweetBody);
+        } else {
+            log.info("API ERROR: totalJourneys={}", totalJourneys);
+        }
     }
 
 }
