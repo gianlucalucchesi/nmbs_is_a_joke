@@ -102,7 +102,7 @@ public class IRailApiHelper {
             httpURLConnection.setConnectTimeout(5000); // https://stackoverflow.com/a/2799955/10470183
             httpURLConnection.setRequestMethod("GET");
 
-            if (httpURLConnection.getResponseCode() == 200) {
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 String inputLine;
                 StringBuilder content = new StringBuilder();
