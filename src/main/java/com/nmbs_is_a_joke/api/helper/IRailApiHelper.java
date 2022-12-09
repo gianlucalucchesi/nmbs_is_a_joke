@@ -98,6 +98,7 @@ public class IRailApiHelper {
         try {
             url = new URL(uriBuilder.toString());
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setReadTimeout(5000);
             httpURLConnection.setConnectTimeout(5000); // https://stackoverflow.com/a/2799955/10470183
             httpURLConnection.setRequestMethod("GET");
 
