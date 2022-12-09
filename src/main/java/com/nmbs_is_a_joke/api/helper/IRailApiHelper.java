@@ -19,7 +19,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
+
+import static java.util.Objects.*;
 
 @Component
 public class IRailApiHelper {
@@ -51,7 +52,7 @@ public class IRailApiHelper {
                 .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
-        return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
+        return nonNull(jsonString) ? mapper.readValue(jsonString, Liveboard.class) : null;
     }
 
     public Stations retrieveAllStations() throws IOException {
@@ -59,14 +60,14 @@ public class IRailApiHelper {
         final String endpoint = "/stations";
 
         URIBuilder uriBuilder = new URIBuilder()
-                .setScheme(scheme).
-                setHost(host)
+                .setScheme(scheme)
+                .setHost(host)
                 .setPath(endpoint)
                 .addParameter("format", "json")
                 .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
-        return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, Stations.class) : null;
+        return nonNull(jsonString) ? mapper.readValue(jsonString, Stations.class) : null;
     }
 
     public VehicleRetrieval retrieveVehicle(String vehicleId, Calendar calendar) throws IOException {
@@ -86,7 +87,7 @@ public class IRailApiHelper {
                 .addParameter("lang", "en");
 
         String jsonString = getRequest(uriBuilder);
-        return Objects.nonNull(jsonString) ? mapper.readValue(jsonString, VehicleRetrieval.class) : null;
+        return nonNull(jsonString) ? mapper.readValue(jsonString, VehicleRetrieval.class) : null;
     }
 
     private String getRequest(URIBuilder uriBuilder) throws IOException {
@@ -104,7 +105,7 @@ public class IRailApiHelper {
                 reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 String inputLine;
                 StringBuilder content = new StringBuilder();
-                while (Objects.nonNull((inputLine = reader.readLine()))) {
+                while (nonNull((inputLine = reader.readLine()))) {
                     content.append(inputLine);
                 }
                 return content.toString();
@@ -115,14 +116,13 @@ public class IRailApiHelper {
             log.info("########## Connection timeout: {}", url);
         } catch (RuntimeException e) {
             log.info("########## RuntimeException: {}", e.toString());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.info("########## IOException: {}", e.toString());
         } finally {
-            if (Objects.nonNull(reader)) {
+            if (nonNull(reader)) {
                 reader.close();
             }
-            if (Objects.nonNull(httpURLConnection)) {
+            if (nonNull(httpURLConnection)) {
                 httpURLConnection.disconnect();
             }
         }
