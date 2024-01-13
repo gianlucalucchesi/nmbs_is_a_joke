@@ -199,3 +199,5 @@ fabric.properties
 !.idea/runConfigurations
 
 twitter4j.properties
+
+.vscode
