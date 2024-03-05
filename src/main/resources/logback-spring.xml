@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--https://stackoverflow.com/a/38653772-->
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -11,13 +11,13 @@
 
     <!--This refers to the file logging-->
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
-    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
 
     <root level="INFO">
         <!--This refers to appender name="STDOUT" tag-->
         <!--Remove this appender-ref to disable console logging-->
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
         <!--This appender writes to external log file and is configured in application.properties-->
-        <appender-ref ref="FILE" />
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

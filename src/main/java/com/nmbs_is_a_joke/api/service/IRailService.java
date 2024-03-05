@@ -1,6 +1,7 @@
 package com.nmbs_is_a_joke.api.service;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.nmbs_is_a_joke.api.helper.IRailApiHelper;
 import com.nmbs_is_a_joke.api.model.*;
 import lombok.Getter;
@@ -22,8 +23,7 @@ public class IRailService {
     int totalDelayedTrains = 0;
     int totalTrainsCancelled = 0;
     IRailApiHelper iRailApiHelper;
-    ch.qos.logback.classic.Logger log =
-            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
+    Logger log = (Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
 
     public IRailService() {
         iRailApiHelper = new IRailApiHelper();
@@ -57,7 +57,6 @@ public class IRailService {
         }
 
         this.vehicleList = removeDuplicates(this.vehicleList);
-        System.out.println();
 
         i = 0;
         for (String vehicleName : this.vehicleList) {
@@ -66,8 +65,6 @@ public class IRailService {
             log.info("Retrieving vehicle details of {} ({}/{})\r", vehicleName, i, this.vehicleList.size());
             this.vehicleDetailsForDateList.add(getVehicleDetailsForDate(vehicleName, calendar));
         }
-
-        System.out.println();
 
         for (VehicleRetrieval vehicleDetails : this.vehicleDetailsForDateList) {
             totalDelayInSeconds += getDelayForVehicle(vehicleDetails);
@@ -94,7 +91,7 @@ public class IRailService {
 
         while (!allTrainsRetrieved) {
             Liveboard liveboard = iRailApiHelper.retrieveLiveboard(station.getId(), date, time);
-            if (Objects.nonNull(liveboard) && liveboard.getDepartures().getDepartureList().size() > 0) {
+            if (Objects.nonNull(liveboard) && !liveboard.getDepartures().getDepartureList().isEmpty()) {
                 int index = 0;
                 for (Departure departure : liveboard.getDepartures().getDepartureList()) {
                     index++;
@@ -181,5 +178,4 @@ public class IRailService {
         }
         return time;
     }
-
 }

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class TwitterService {
-
     public String getTweetBody(Calendar calendar, int totalJourneys, int totalDelayedTrains, int totalCanceledJourneys, int totalDelayInSeconds) {
         String date = handleDate(calendar);
         String accumulatedDelay = handleAccumulatedDelay(totalDelayInSeconds);

@@ -46,5 +46,4 @@ public class NmbsIsAJokeService {
             log.info("API ERROR: totalJourneys={}", totalJourneys);
         }
     }
-
 }

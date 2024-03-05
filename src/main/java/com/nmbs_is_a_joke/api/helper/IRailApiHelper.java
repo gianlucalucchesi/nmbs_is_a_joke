@@ -1,6 +1,7 @@
 package com.nmbs_is_a_joke.api.helper;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmbs_is_a_joke.api.model.Liveboard;
 import com.nmbs_is_a_joke.api.model.Stations;
@@ -20,14 +21,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static java.util.Objects.*;
+import static java.util.Objects.nonNull;
 
 @Component
 public class IRailApiHelper {
-    final static String host = "api.irail.be";
-    final static String scheme = "https";
-    ch.qos.logback.classic.Logger log =
-            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
+    final static String HOST = "api.irail.be";
+    final static String SCHEME = "https";
+    Logger log = (Logger) LoggerFactory.getLogger("com.nmbs_is_a_joke");
 
     public IRailApiHelper() {
         log.setLevel(Level.INFO);
@@ -41,8 +41,8 @@ public class IRailApiHelper {
         String strDate = dateFormat.format(getDateFromCalendar(calendar));
 
         URIBuilder uriBuilder = new URIBuilder()
-                .setScheme(scheme)
-                .setHost(host)
+                .setScheme(SCHEME)
+                .setHost(HOST)
                 .setPath(endpoint)
                 .addParameter("id", stationId)
                 .addParameter("date", strDate)
@@ -60,8 +60,8 @@ public class IRailApiHelper {
         final String endpoint = "/stations";
 
         URIBuilder uriBuilder = new URIBuilder()
-                .setScheme(scheme)
-                .setHost(host)
+                .setScheme(SCHEME)
+                .setHost(HOST)
                 .setPath(endpoint)
                 .addParameter("format", "json")
                 .addParameter("lang", "en");
@@ -78,8 +78,8 @@ public class IRailApiHelper {
         String strDate = dateFormat.format(getDateFromCalendar(calendar));
 
         URIBuilder uriBuilder = new URIBuilder()
-                .setScheme(scheme)
-                .setHost(host)
+                .setScheme(SCHEME)
+                .setHost(HOST)
                 .setPath(endpoint)
                 .addParameter("id", vehicleId)
                 .addParameter("date", strDate)
